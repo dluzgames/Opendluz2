@@ -27,6 +27,7 @@ const envSchema = z.object({
     OLLAMA_CLOUD_URL: z.string().optional(),
     OLLAMA_MODEL: z.string().default("llama3"),
     LLM_PROVIDER: z.enum(["groq", "openrouter", "ollama", "gemini"]).default("groq"),
+    LLM_FAILOVER_LIST: z.string().default("groq,openrouter,gemini"),
     PORT: z.coerce.number().default(4000),
     CHROME_REMOTE_DEBUGGING_PORT: z.coerce.number().default(9222),
     YOUTUBE_MCP_PATH: z.string().default("./SKILLS/youtube/bin/youtube-uploader-mcp.exe"),
