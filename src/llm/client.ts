@@ -35,7 +35,7 @@ export const callLLM = async (messages: any[], tools?: any[]): Promise<LLMRespon
 
     for (let i = 0; i <= MAX_RETRIES; i++) {
         try {
-            console.log(`[LLM] Tentando Groq (Llama 3.3 70b) (Tentativa ${i + 1}/${MAX_RETRIES + 1})...`);
+            console.log(`[LLM] Tentando Groq (${env.GROQ_MODEL}) (Tentativa ${i + 1}/${MAX_RETRIES + 1})...`);
 
             const chatCompletion = await groq.chat.completions.create({
                 messages: messages.map(m => ({
@@ -43,7 +43,7 @@ export const callLLM = async (messages: any[], tools?: any[]): Promise<LLMRespon
                     content: m.content || "",
                     tool_call_id: m.tool_call_id, // If it's a tool response
                 })),
-                model: "llama-3.3-70b-versatile",
+                model: env.GROQ_MODEL,
                 tools: groqTools as any,
                 tool_choice: "auto",
                 temperature: 0.1,

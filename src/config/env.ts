@@ -21,6 +21,7 @@ const envSchema = z.object({
     EVOLUTION_INSTANCE_NAME: z.string().optional(),
     GEMINI_API_KEY: z.string().optional(),
     GROQ_API_KEY: z.string().optional(),
+    GROQ_MODEL: z.string().default("llama-3.1-8b-instant"),
     PORT: z.coerce.number().default(4000),
     CHROME_REMOTE_DEBUGGING_PORT: z.coerce.number().default(9222),
     YOUTUBE_MCP_PATH: z.string().default("./SKILLS/youtube/bin/youtube-uploader-mcp.exe"),
