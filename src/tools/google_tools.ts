@@ -169,7 +169,7 @@ export async function executeGoogleTool(name: string, args: any): Promise<string
 
         switch (name) {
             case "gmail_search":
-                const maxSearch = args.max || 5;
+                const maxSearch = parseInt(args.max?.toString() || "5", 10);
                 cmd = `"${GOG_PATH}" gmail search "${args.query}" --max ${maxSearch} --account ${GOG_ACCOUNT} --json --no-input`;
                 break;
 
