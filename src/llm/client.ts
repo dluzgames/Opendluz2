@@ -85,9 +85,14 @@ async function executeProvider(provider: string, messages: any[], tools?: any[])
     if (provider === 'ollama') {
         if (!env.OLLAMA_CLOUD_URL) throw new Error("Configuração do Ollama Cloud ausente.");
 
-        const response = await fetch(`${env.OLLAMA_CLOUD_URL}/api/chat`, {
+        const headers: Record<string, string> = { "Content-Type": "application/json" };
+        if (env.OLLAMA_API_KEY) {
+            headers["Authorization"] = `Bearer ${env.OLLAMA_API_KEY}`;
+        }
+
+        const response = await fetch(`${env.OLLAMA_CLOUD_URL}/chat`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers,
             body: JSON.stringify({
                 model: env.OLLAMA_MODEL,
                 messages,

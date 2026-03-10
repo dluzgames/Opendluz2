@@ -24,6 +24,7 @@ const envSchema = z.object({
     GROQ_MODEL: z.string().default("llama-3.1-8b-instant"),
     OPENROUTER_API_KEY: z.string().optional(),
     OPENROUTER_MODEL: z.string().default("google/gemini-2.0-flash-001"),
+    OLLAMA_API_KEY: z.string().optional(),
     OLLAMA_CLOUD_URL: z.string().optional(),
     OLLAMA_MODEL: z.string().default("llama3"),
     LLM_PROVIDER: z.enum(["groq", "openrouter", "ollama", "gemini"]).default("groq"),
