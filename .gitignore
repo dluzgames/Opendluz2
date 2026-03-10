@@ -1,0 +1,15 @@
+node_modules
+dist
+.env
+memory.db*
+*.txt
+*.db
+*.db-shm
+*.db-wal
+web-app/node_modules
+web-app/dist
+.DS_Store
+du.json
+deploy_key*
+*.json.old
+*.bak

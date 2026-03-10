@@ -1,0 +1,11 @@
+node_modules
+dist
+web-app/node_modules
+web-app/dist
+memory.db*
+.env
+*.zip
+*.exe
+*.webp
+brain
+.git

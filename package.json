@@ -1,0 +1,37 @@
+{
+  "name": "opendluz",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "axios": "^1.13.6",
+    "better-sqlite3": "^12.6.2",
+    "cors": "^2.8.6",
+    "cron-parser": "^5.5.0",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "grammy": "^1.41.1",
+    "groq-sdk": "^0.37.0",
+    "node-cron": "^4.2.1",
+    "postgres": "^3.4.8",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.3.5",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

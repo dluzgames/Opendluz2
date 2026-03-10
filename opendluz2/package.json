@@ -1,0 +1,44 @@
+{
+  "name": "opendluz2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:web\" \"npm run dev:bot\"",
+    "dev:web": "next dev",
+    "dev:bot": "tsx watch src/worker.ts",
+    "build": "next build",
+    "start": "concurrently \"npm run start:web\" \"npm run start:bot\"",
+    "start:web": "next start",
+    "start:bot": "node dist/worker.js",
+    "build:bot": "tsc --project tsconfig.worker.json",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.6.2",
+    "clsx": "^2.1.1",
+    "concurrently": "^9.2.1",
+    "dotenv": "^16.4.5",
+    "grammy": "^1.41.1",
+    "groq-sdk": "^0.37.0",
+    "lucide-react": "^0.577.0",
+    "next": "^16.1.6",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tailwind-merge": "^3.5.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^15.0.0",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
+  }
+}
