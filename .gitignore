@@ -13,3 +13,5 @@ du.json
 deploy_key*
 *.json.old
 *.bak
+
+!data/
