@@ -18,15 +18,22 @@ RUN cd web-app && npm run build
 # Production stage
 FROM node:20-slim
 
+# Copy Go from official image
+COPY --from=golang:1.23-bookworm /usr/local/go /usr/local/go
+ENV PATH="/usr/local/go/bin:${PATH}"
+ENV GOPATH="/root/go"
+ENV PATH="${GOPATH}/bin:${PATH}"
+
 # Install system dependencies
 # - ca-certificates for SSL
 # - chromium for browser tools
-# - golang for building youtube-uploader-mcp (linux version)
+# - git for go install
+# - curl for health checks
 RUN apt-get update && apt-get install -y \
     ca-certificates \
     chromium \
-    golang \
     curl \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
