@@ -62,13 +62,13 @@ RUN chmod +x /app/SKILLS/google/bin/gog_linux && \
 RUN mkdir -p /app/data && chmod -R 777 /app/data
 
 # Environment variables
-ENV PORT=5000
+ENV PORT=3000
 ENV NODE_ENV=production
 ENV XDG_CONFIG_HOME=/app/data
 ENV GOG_KEYRING_BACKEND=file
 ENV GOG_KEYRING_PASSWORD=opendluz_secret
 ENV YOUTUBE_MCP_PATH="./SKILLS/youtube/bin/youtube-uploader-mcp"
 
-EXPOSE 5000
+EXPOSE 3000
 
 ENTRYPOINT ["/bin/bash", "./entrypoint.sh"]
