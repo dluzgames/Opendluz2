@@ -4,7 +4,6 @@ import { wordpressTools, executeWordPressTool } from "./wordpress_tools.js";
 import { memoryTools, executeMemoryTool } from "./memory_tools.js";
 import { evolutionTools, executeEvolutionTool } from "./evolution_tools.js";
 import { schedulerTools, executeSchedulerTool } from "./scheduler_tools.js";
-import { youtubeTools, executeYouTubeTool } from "./youtube_tools.js";
 import { browserTools, executeBrowserTool } from "./browser_tools.js";
 
 // Registro local das nossas tools nativas
@@ -15,7 +14,6 @@ export const localTools = [
     ...memoryTools,
     ...evolutionTools,
     ...schedulerTools,
-    ...youtubeTools,
     ...browserTools,
 ];
 
@@ -52,11 +50,6 @@ export async function executeTool(name: string, args: Record<string, any>): Prom
         // Checa se é ferramenta de agendamento (Cron)
         if (name.startsWith("scheduler_")) {
             return await executeSchedulerTool(name, args);
-        }
-
-        // Checa se é ferramenta do YouTube
-        if (name.startsWith("youtube_")) {
-            return await executeYouTubeTool(name, args);
         }
 
         // Checa se é ferramenta do Browser

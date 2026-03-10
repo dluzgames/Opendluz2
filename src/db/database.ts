@@ -34,7 +34,8 @@ export const initDB = async () => {
       content TEXT NOT NULL,
       timestamp BIGINT NOT NULL,
       tool_calls TEXT,
-      tool_call_id TEXT
+      tool_call_id TEXT,
+      tool_name TEXT
     );
 
     CREATE TABLE IF NOT EXISTS memories (
@@ -73,6 +74,7 @@ export interface ChatMessage {
     content: string;
     tool_calls?: string; // JSON string
     tool_call_id?: string;
+    tool_name?: string;
     timestamp?: number;
 }
 
@@ -82,15 +84,15 @@ export const saveMessage = async (sessionId: string, msg: ChatMessage) => {
 
     if (isPostgres) {
         await sql`
-      INSERT INTO messages (session_id, role, content, timestamp, tool_calls, tool_call_id)
-      VALUES (${sessionId}, ${msg.role}, ${msg.content}, ${timestamp}, ${tool_calls}, ${msg.tool_call_id || null})
+      INSERT INTO messages (session_id, role, content, timestamp, tool_calls, tool_call_id, tool_name)
+      VALUES (${sessionId}, ${msg.role}, ${msg.content}, ${timestamp}, ${tool_calls}, ${msg.tool_call_id || null}, ${msg.tool_name || null})
     `;
     } else {
         const insert = db.prepare(`
-      INSERT INTO messages (session_id, role, content, timestamp, tool_calls, tool_call_id)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO messages (session_id, role, content, timestamp, tool_calls, tool_call_id, tool_name)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `);
-        insert.run(sessionId, msg.role, msg.content, timestamp, tool_calls, msg.tool_call_id || null);
+        insert.run(sessionId, msg.role, msg.content, timestamp, tool_calls, msg.tool_call_id || null, msg.tool_name || null);
     }
 };
 
@@ -107,7 +109,7 @@ export const getSessionHistory = async (sessionId: string, limit: number = 50): 
     `;
     } else {
         const stmt = db.prepare(`
-      SELECT role, content, tool_calls, tool_call_id
+      SELECT role, content, tool_calls, tool_call_id, tool_name
       FROM messages 
       WHERE session_id = ? 
       ORDER BY timestamp DESC, id DESC
@@ -126,6 +128,7 @@ export const getSessionHistory = async (sessionId: string, limit: number = 50): 
             }
         }
         if (row.tool_call_id) rawMsg.tool_call_id = row.tool_call_id;
+        if (row.tool_name) rawMsg.tool_name = row.tool_name;
         return rawMsg;
     });
 };

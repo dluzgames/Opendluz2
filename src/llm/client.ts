@@ -33,6 +33,7 @@ async function executeProvider(provider: string, messages: any[], tools?: any[])
                 role: m.role === 'tool' ? 'tool' : (m.role === 'assistant' ? 'assistant' : (m.role === 'system' ? 'system' : 'user')),
                 content: m.content || "",
                 tool_call_id: m.tool_call_id,
+                tool_calls: m.tool_calls
             })),
             model: env.GROQ_MODEL,
             tools: groqTools as any,
@@ -66,7 +67,12 @@ async function executeProvider(provider: string, messages: any[], tools?: any[])
             },
             body: JSON.stringify({
                 model: env.OPENROUTER_MODEL,
-                messages,
+                messages: messages.map(m => ({
+                    role: m.role === 'tool' ? 'tool' : (m.role === 'assistant' ? 'assistant' : (m.role === 'system' ? 'system' : 'user')),
+                    content: m.content || "",
+                    tool_call_id: m.tool_call_id,
+                    tool_calls: m.tool_calls
+                })),
                 tools,
             })
         });
@@ -95,7 +101,12 @@ async function executeProvider(provider: string, messages: any[], tools?: any[])
             headers,
             body: JSON.stringify({
                 model: env.OLLAMA_MODEL,
-                messages,
+                messages: messages.map(m => ({
+                    role: m.role === 'tool' ? 'tool' : (m.role === 'assistant' ? 'assistant' : (m.role === 'system' ? 'system' : 'user')),
+                    content: m.content || "",
+                    tool_call_id: m.tool_call_id,
+                    tool_calls: m.tool_calls
+                })),
                 stream: false,
                 tools
             })
@@ -113,18 +124,78 @@ async function executeProvider(provider: string, messages: any[], tools?: any[])
 
     if (provider === 'gemini') {
         if (!genAI) throw new Error("Configuração do Gemini ausente.");
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-        const result = await model.generateContent({
-            contents: messages.map(m => ({
-                role: m.role === 'assistant' ? 'model' : 'user',
-                parts: [{ text: m.content || "" }]
+        const geminiTools = tools ? [{
+            functionDeclarations: tools.map(t => ({
+                name: t.function.name,
+                description: t.function.description,
+                parameters: t.function.parameters
             }))
+        }] : undefined;
+
+        const systemMsg = messages.find(m => m.role === 'system');
+        const chatMessages = messages.filter(m => m.role !== 'system');
+
+        const model = genAI.getGenerativeModel({
+            model: "gemini-2.0-flash",
+            systemInstruction: systemMsg?.content,
+            tools: geminiTools as any
         });
+
+        const contents = chatMessages.map(m => {
+            if (m.role === 'tool') {
+                return {
+                    role: 'function',
+                    parts: [{
+                        functionResponse: {
+                            name: m.tool_name || "unknown", // Idealmente teríamos o nome aqui
+                            response: { result: m.content }
+                        }
+                    }]
+                };
+            }
+
+            const parts: any[] = [{ text: m.content || "" }];
+            if (m.tool_calls) {
+                m.tool_calls.forEach((tc: any) => {
+                    parts.push({
+                        functionCall: {
+                            name: tc.function.name,
+                            args: typeof tc.function.arguments === 'string' ? JSON.parse(tc.function.arguments) : tc.function.arguments
+                        }
+                    });
+                });
+            }
+
+            return {
+                role: m.role === 'assistant' ? 'model' : 'user',
+                parts
+            };
+        });
+
+        // Gemini fix: If the last message is a function response, it must be followed by a model turn or be the last message.
+        // The loop in loop.ts ensures we call again after a tool result.
+
+        const result = await model.generateContent({ contents: contents as any });
+        const response = result.response;
+        const candidate = response.candidates?.[0];
+        const content = response.text() || "";
+
+        const tool_calls = candidate?.content?.parts
+            ?.filter(p => p.functionCall)
+            ?.map((p, index) => ({
+                id: `call_${Date.now()}_${index}`,
+                type: 'function',
+                function: {
+                    name: p.functionCall!.name,
+                    arguments: JSON.stringify(p.functionCall!.args)
+                }
+            }));
 
         return {
             role: 'assistant',
-            content: result.response.text(),
+            content: content,
+            tool_calls: tool_calls && tool_calls.length > 0 ? tool_calls : undefined
         };
     }
 

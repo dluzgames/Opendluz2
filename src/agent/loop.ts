@@ -68,8 +68,9 @@ export const processUserMessage = async (sessionId: string, userMessage: string)
                         await saveMessage(sessionId, {
                             role: 'tool',
                             content: toolResult,
-                            tool_call_id: toolCall.id
-                        });
+                            tool_call_id: toolCall.id,
+                            tool_name: functionName // Adicionado para facilitar o mapeamento no Gemini
+                        } as any);
                     }
                 }
 
